@@ -10,7 +10,8 @@ exports.handleRequest = function (req, res) {
   var action = actions[req.method];
 
   if(action){
-    action(res, "web/public/index.html", helpers.sendResponse);
+    var filePath = '.' + req.url;
+    action(res, filePath, helpers.sendResponse);
   } else {
     helpers.sendResponse(res, "Not Found", 404);
   }

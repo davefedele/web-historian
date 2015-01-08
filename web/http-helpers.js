@@ -13,6 +13,15 @@ exports.headers = headers = {
 exports.serveAssets = function(res, asset, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
+  if (asset === './') {
+    asset = "web/public/index.html";
+    exports.headers["Content-Type"] = "text/html";
+  } else if( asset === './styles.css') {
+    asset = "web/public/styles.css";
+    exports.headers["Content-Type"] = "text/css";
+  }
+
+  console.log(asset);
   fs.readFile(asset, function(error, content){
     if (error){
       callback(res, "File not found", 500);
