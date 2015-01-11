@@ -11,30 +11,41 @@ exports.headers = headers = {
 };
 
 exports.serveAssets = function(res, asset, callback) {
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
-  if (asset === './') {
-    asset = "web/public/index.html";
-    exports.headers["Content-Type"] = "text/html";
-  } else if( asset === './styles.css') {
-    asset = "web/public/styles.css";
-    exports.headers["Content-Type"] = "text/css";
-  }
+  var encoding = {encoding: 'utf8'};
 
-  console.log(asset);
-  fs.readFile(asset, function(error, content){
-    if (error){
-      callback(res, "File not found", 500);
-    } else{
-      callback(res, content, 200);
+  fs.readFile( archive.paths.siteAssets + asset, encoding, function(error, content){
+    if (error){ //if can't read public
+      fs.readFile( archive.paths.archivedSites + asset, encoding, function(error, content){
+        if(error){ //if can't read archivedSites
+          callback ? callback() : exports.sendResponse(res, "File not found", 404);
+        } else{ //if we can read the archived Sites file
+          exports.sendResponse(res, content);
+        }
+      });
+    } else{ //if it can read the public site
+      exports.sendResponse(res, content);
     }
   });
-
-  // exports.sendResponse(res, "/<input/");
 };
 
 exports.sendResponse = function(res, data, statusCode){
   statusCode = statusCode || 200;
   res.writeHead(statusCode, headers);
   res.end(data);
+};
+
+exports.sendRedirect = function(res, redirectUrl, statusCode){
+  statusCode = statusCode || 302;
+  res.writeHead(statusCode, {Location: location});
+  res.end(data);
+};
+
+exports.collectData = function(req, callback){
+  var data = "";
+  req.on("data", function(chunk){
+    data += chunk;
+  });
+  req.on("end", function(){
+    callback(data);
+  });
 };

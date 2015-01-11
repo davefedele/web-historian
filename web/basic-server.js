@@ -1,7 +1,6 @@
 var http = require("http");
 var handler = require("./request-handler");
 var initialize = require("./initialize.js");
-var urlParser = require("url");
 var helpers = require("./http-helpers");
 
 // Why do you think we have this here?
@@ -11,20 +10,9 @@ initialize();
 var port = 8080;
 var ip = "127.0.0.1";
 
-var routes = {
-  "/": handler.handleRequest,
-  "/styles.css": handler.handleRequest
-};
-
 var server = http.createServer(function(req, res){
-  var parts = urlParser.parse(req.url);
-  var route = routes[parts.pathname];
-
-  if(route){
-    route(req, res);
-  } else {
-    helpers.sendResponse(res, "Not Found", 404);
-  }
+  console.log("requesting ", req.url);
+  handler.handleRequest(req, res);
 });
 
 console.log("Listening on http://" + ip + ":" + port);
