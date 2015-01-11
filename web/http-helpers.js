@@ -36,8 +36,8 @@ exports.sendResponse = function(res, data, statusCode){
 
 exports.sendRedirect = function(res, redirectUrl, statusCode){
   statusCode = statusCode || 302;
-  res.writeHead(statusCode, {Location: location});
-  res.end(data);
+  res.writeHead(statusCode, {Location: redirectUrl});
+  res.end();
 };
 
 exports.collectData = function(req, callback){

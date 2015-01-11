@@ -42,14 +42,26 @@ exports.isUrlInList = function(url, callback){
   });
 };
 
-exports.addUrlToList = function(){
-  //add user posted url to the sites.txt
+exports.addUrlToList = function(url, callback){
+  fs.appendFile(exports.paths.list, url+'\n', function(error, file){
+    if (error){
+      throw error;
+    }else {
+      console.log("successfully wrote ", file);
+      callback(file);
+    }
+  });
 };
 
 exports.isURLArchived = function(site, callback){
-  fs.readdir(exports.paths.archivedSites, function(archives){
-    var found = _.contains(archives, site);
-    callback(found);
+  fs.readdir(exports.paths.archivedSites, function(error, archives){
+    if(error) {
+      throw error;
+    }else {
+      console.log("archives = ", archives);
+      var found = _.contains(archives, site);
+      callback(found);
+    }
   });
 };
 

@@ -13,24 +13,28 @@ var actions = {
     //collect our data = desired url
     helpers.collectData(req, function(data){
       var site = data.split('=')[1];
-      //in sites.txt
+      //in sites.txt?
       archive.isUrlInList(site, function(exists){
-        //yes in our sites.txt
+        console.log("yes site is in sites.txt ->", site);
         if(exists){
           //in the archives?
           archive.isURLArchived(site, function(found){
             if(found){
-            //yes in archives
-              //show it
-              console.log("it's in the archives so we're showing it");
+              console.log("yes site archived ->", site);
               helpers.sendRedirect(res, site);
+            } else{
+              console.log("no site not archived  redirecting to loading ->", site);
+              helpers.sendRedirect(res, 'loading.html');
             }
           });
-            //not in archives
+        } else{
+            console.log("no site is not in sites.txt ->", site);
+            console.log("adding site to sites.txt ->", site);
+            archive.addUrlToList(site, function(file){
+              console.log(site + " added to " + file);
               //show loading
-        //not in sites.txt
-          //add to sites.txt
-            //show loading
+              helpers.sendRedirect(res, 'loading.html');
+            });
         }
       });
     });
